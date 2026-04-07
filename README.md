@@ -169,6 +169,8 @@ streamlit run main.py
 
 ---
 
+![Preview](preview.png)
+
 ## 👨‍💻 Author
 
 **H Sangamesh**
