@@ -30,14 +30,17 @@ st.set_page_config(
 # ===============================
 # 🏷 HEADER
 # ===============================
-st.title("🏦 Economic Intelligence AI")
-st.caption("AI-powered RBI insights using Retrieval-Augmented Generation (RAG)")
+st.title("🏦 Bengaluru Hybrid Economic Intelligence AI")
+st.caption("Understand RBI policies, inflation trends, and economic signals using AI")
 
 # ===============================
 # 💬 SESSION STATE
 # ===============================
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
+
+if "selected_query" not in st.session_state:
+    st.session_state.selected_query = ""
 
 # ===============================
 # 📚 VECTOR STORE
@@ -135,9 +138,40 @@ Format:
     return response.content, docs
 
 # ===============================
+# 🧠 INTRO SECTION (TOP UX)
+# ===============================
+st.markdown("### 💡 What can this AI do?")
+st.markdown("""
+- Analyze RBI reports and policies  
+- Explain inflation, repo rate, GDP trends  
+- Provide structured economic insights  
+- Answer finance-related questions intelligently  
+""")
+
+st.markdown("### 🚀 Try asking:")
+
+example_queries = [
+    "Impact of repo rate on inflation",
+    "RBI monetary policy analysis",
+    "Key drivers of GDP growth",
+    "How does inflation affect economy?",
+    "What is CRR and its impact?"
+]
+
+cols = st.columns(len(example_queries))
+
+for i, q in enumerate(example_queries):
+    if cols[i].button(q):
+        st.session_state.selected_query = q
+
+# ===============================
 # 🎯 USER INPUT
 # ===============================
-query = st.text_input("🔍 Ask an economic question:")
+query = st.text_input(
+    "🔍 Ask your question:",
+    value=st.session_state.selected_query,
+    placeholder="Type or click an example above..."
+)
 
 # ===============================
 # 🚀 PROCESS QUERY
