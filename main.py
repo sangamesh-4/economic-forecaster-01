@@ -13,7 +13,7 @@ GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 # 📦 IMPORTS
 # ===============================
 from langchain_community.document_loaders import PyPDFLoader
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import FakeEmbeddings
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
@@ -30,7 +30,7 @@ st.set_page_config(
 # ===============================
 # 🏷 HEADER
 # ===============================
-st.title("🏦 Bengaluru Hybrid Economic Intelligence AI")
+st.title("🏦 Economic Intelligence AI")
 st.caption("AI-powered RBI insights using Retrieval-Augmented Generation (RAG)")
 
 # ===============================
