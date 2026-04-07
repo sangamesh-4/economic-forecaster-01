@@ -14,22 +14,23 @@ groq_key = os.getenv("GROQ_API_KEY")
 # -------------------------------
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from sentence_transformers import SentenceTransformer
 from langchain_groq import ChatGroq
 from langchain_community.vectorstores import Chroma
 
 # -------------------------------
 # EMBEDDINGS
 # -------------------------------
+from langchain_community.embeddings import FakeEmbeddings
+
 class CustomEmbeddings:
     def __init__(self):
-        self.model = SentenceTransformer("all-MiniLM-L6-v2")
+        self.model = FakeEmbeddings(size=384)
 
     def embed_documents(self, texts):
-        return self.model.encode(texts).tolist()
+        return self.model.embed_documents(texts)
 
     def embed_query(self, text):
-        return self.model.encode([text])[0].tolist()
+        return self.model.embed_query(text)
 
 # -------------------------------
 # PAGE CONFIG
@@ -224,7 +225,7 @@ if query:
 
 # -------------------------------
 # LANDING
-# -------------------------------
+# -------------------------------c
 else:
     st.markdown("""
     <div class="center-box">
