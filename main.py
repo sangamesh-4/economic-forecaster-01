@@ -34,6 +34,18 @@ st.title("🏦 Bengaluru Hybrid Economic Intelligence AI")
 st.caption("Understand RBI policies, inflation trends, and economic signals using AI")
 
 # ===============================
+# 📂 FILE UPLOADER (FIX ISSUE 1)
+# ===============================
+uploaded_files = st.sidebar.file_uploader(
+    "📂 Upload RBI PDFs",
+    type="pdf",
+    accept_multiple_files=True
+)
+
+if not uploaded_files:
+    st.sidebar.info("👆 Upload PDFs to enable analysis")
+
+# ===============================
 # 💬 SESSION STATE
 # ===============================
 if "chat_history" not in st.session_state:
@@ -43,24 +55,33 @@ if "selected_query" not in st.session_state:
     st.session_state.selected_query = ""
 
 # ===============================
-# 📚 VECTOR STORE
+# 📚 VECTOR STORE (FIXED)
 # ===============================
 @st.cache_resource
-def get_vectorstore():
-    data_path = Path("rbi_data")
-
-    if not data_path.exists():
-        return None
+def get_vectorstore(uploaded_files):
 
     docs = []
 
-    for pdf in data_path.glob("*.pdf"):
-        try:
-            loader = PyPDFLoader(str(pdf))
-            docs.extend(loader.load())
-        except Exception as e:
-            print(f"Error loading {pdf}: {e}")
+    # 🔥 1. Load uploaded PDFs (PRIMARY)
+    if uploaded_files:
+        for file in uploaded_files:
+            try:
+                loader = PyPDFLoader(file)
+                docs.extend(loader.load())
+            except Exception as e:
+                print(f"Error loading uploaded PDF: {e}")
 
+    # 🔹 2. Optional fallback (repo PDFs)
+    data_path = Path("rbi_data")
+    if data_path.exists():
+        for pdf in data_path.glob("*.pdf"):
+            try:
+                loader = PyPDFLoader(str(pdf))
+                docs.extend(loader.load())
+            except Exception as e:
+                print(f"Error loading {pdf}: {e}")
+
+    # 🚨 CRITICAL CHECK
     if not docs:
         return None
 
@@ -85,10 +106,10 @@ def rag_query(query, k=5):
     if not GROQ_API_KEY:
         return "❌ Missing GROQ API Key.", []
 
-    vectorstore = get_vectorstore()
+    vectorstore = get_vectorstore(uploaded_files)
 
     if not vectorstore:
-        return "📂 No data available. Please add PDFs.", []
+        return "📂 No data available. Please upload PDFs from sidebar.", []
 
     retriever = vectorstore.as_retriever(search_kwargs={"k": k})
     docs = retriever.invoke(query)
